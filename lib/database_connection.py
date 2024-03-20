@@ -1,5 +1,6 @@
-import os, psycopg
+import os
 from flask import g
+import psycopg
 from psycopg.rows import dict_row
 
 
@@ -72,8 +73,6 @@ class DatabaseConnection:
 # Flask request can use. To see how to use it, look at example_routes.py
 def get_flask_database_connection(app):
     if not hasattr(g, 'flask_database_connection'):
-        g.flask_database_connection = DatabaseConnection(
-            test_mode=((os.getenv('APP_ENV') == 'test') or (app.config['TESTING'] == True))
-        )
+        g.flask_database_connection = DatabaseConnection(test_mode=app.config['TESTING'])
         g.flask_database_connection.connect()
     return g.flask_database_connection
