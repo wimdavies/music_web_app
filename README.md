@@ -46,10 +46,7 @@ There are two videos to support:
 # Run the tests (with extra logging)
 (web-application-starter-venv); pytest -sv
 
-# Run the app
-; python app.py
-# Now visit http://localhost:5001/emoji in your browser
-```# Run the web server
+# Run the web server
 ; python app.py
 # Now visit http://localhost:5001/emoji in your browser
 ```
