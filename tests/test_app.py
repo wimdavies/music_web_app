@@ -42,6 +42,40 @@ def test_post_albums_with_invalid_params(db_connection, web_client):
     last_album = get_response.data.decode("utf-8").split("\n")[-1]
     assert last_album == "Album(12, Ring Ring, 1973, 2)"
 
+def test_get_artists(db_connection, web_client):
+    db_connection.seed("seeds/music_library.sql")
+    response = web_client.get("/artists")
+    assert response.status_code == 200
+    assert response.data.decode("utf-8") == "\n".join([
+        "Artist(1, Pixies, Rock)",
+        "Artist(2, ABBA, Pop)",
+        "Artist(3, Taylor Swift, Pop)",
+        "Artist(4, Nina Simone, Jazz)"
+    ])
+
+def test_post_artists_success(db_connection, web_client):
+    db_connection.seed("seeds/music_library.sql")
+    post_response = web_client.post("/artists", data={
+        "name": "Outkast",
+        "genre": "Hip hop",
+    })
+    assert post_response.status_code == 200
+    assert post_response.data.decode("utf-8") == "Artist added successfully"
+
+    get_response = web_client.get("/artists")
+    last_album = get_response.data.decode("utf-8").split("\n")[-1]
+    assert last_album == "Artist(5, Outkast, Hip hop)"
+
+def test_post_artists_with_invalid_params(db_connection, web_client):
+    db_connection.seed("seeds/music_library.sql")
+    post_response = web_client.post("/artists")
+    assert post_response.status_code == 400
+
+    get_response = web_client.get("/artists")
+    last_album = get_response.data.decode("utf-8").split("\n")[-1]
+    assert last_album == "Artist(4, Nina Simone, Jazz)"
+
+
 # === Example Code Below ===
 
 """
