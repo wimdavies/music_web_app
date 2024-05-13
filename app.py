@@ -1,10 +1,39 @@
 import os
 from flask import Flask, request
+from lib.database_connection import get_flask_database_connection
+from lib.album_repository import AlbumRepository
+from lib.album import Album
 
 # Create a new Flask app
 app = Flask(__name__)
 
 # == Your Routes Here ==
+
+@app.route('/albums', methods=['POST'])
+def post_albums():
+    db_connection = get_flask_database_connection(app)
+    album_repository = AlbumRepository(db_connection)
+    album = Album(
+        None,
+        request.form["title"],
+        request.form["release_year"],
+        request.form["artist_id"]
+    )
+
+    # if "title" not in request.form or "release_year" not in request.form or "artist_id" not in request.form:
+    #     return "Invalid parameters", 400
+    # else:
+    album_repository.create(album)
+    return "Album added successfully"
+
+@app.route('/albums', methods=['GET'])
+def get_albums():
+    db_connection = get_flask_database_connection(app)
+    album_repository = AlbumRepository(db_connection)
+    albums = album_repository.all()
+    return "\n".join([
+        str(album) for album in albums
+    ])
 
 # == Example Code Below ==
 
@@ -15,11 +44,6 @@ app = Flask(__name__)
 @app.route('/emoji', methods=['GET'])
 def get_emoji():
     return ":)"
-
-# This imports some more example routes for you to see how they work
-# You can delete these lines if you don't need them.
-from example_routes import apply_example_routes
-apply_example_routes(app)
 
 # == End Example Code ==
 
